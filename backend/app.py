@@ -33,6 +33,10 @@ def check():
     # TODO 1: sprawdź, czy h należy do zbioru KNOWN_HASHES (wynik zapisz w zmiennej found)
     # TODO 2: zwróć JSON {"found": found}
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 
 if __name__ == "__main__":
     # 0.0.0.0 = nasłuchuj na wszystkich interfejsach kontenera, nie tylko na jego localhost
