@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+
 def connect():
     # Dane połączenia przychodzą ze zmiennych środowiskowych ustawionych w docker-compose.yml
     return psycopg2.connect(
@@ -15,12 +16,14 @@ def connect():
         password=os.environ["DB_PASSWORD"],
     )
 
+
 # Sprawdzenie bazy raz, przy starcie - bez niej usługa nie ma sensu
 conn = connect()
 with conn.cursor() as cur:
     cur.execute("SELECT count(*) FROM leaked_hashes")
     print(f"W bazie jest {cur.fetchone()[0]} hashy", flush=True)
 conn.close()
+
 
 @app.post("/check")
 def check():
@@ -44,11 +47,13 @@ def check():
     finally:
         conn.close()
     return jsonify({"found": found})
-    
+
+
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
-    
+
+
 if __name__ == "__main__":
     # 0.0.0.0 = nasłuchuj na wszystkich interfejsach kontenera, nie tylko na jego localhost
     app.run(host="0.0.0.0", port=5000)
