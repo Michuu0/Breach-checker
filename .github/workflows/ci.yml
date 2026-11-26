@@ -41,9 +41,9 @@ jobs:
       - name: Logowanie do GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Budowanie obrazu produkcyjnego
-        run: docker build -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:latest" backend
+        run: docker build -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:$GITHUB_SHA" backend
       - name: Publikacja
-        run: docker push --all-tags "$IMAGE"
+        run: docker push --all-tags "$IMAGE:$GITHUB_SHA"
 
 
   build-frontend:
@@ -94,3 +94,25 @@ jobs:
       - name: Logi przy błędzie
         if: failure()
         run: docker compose logs
+
+    promote:
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Logowanie do GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Nadanie i publikacja tagu latest dla obu obrazów
+        run: |
+          BACKEND="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/breach-checker-backend"
+          FRONTEND="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/breach-checker-frontend"
+
+          docker pull "$BACKEND:$GITHUB_SHA"
+          docker tag "$BACKEND:$GITHUB_SHA" "$BACKEND:latest"
+          docker push "$BACKEND:latest"
+
+          docker pull "$FRONTEND:$GITHUB_SHA"
+          docker tag "$FRONTEND:$GITHUB_SHA" "$FRONTEND:latest"
+          docker push "$FRONTEND:latest"
