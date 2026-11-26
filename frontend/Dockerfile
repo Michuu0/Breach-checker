@@ -8,7 +8,7 @@ RUN htmlhint index.html
 # --- Etap 2: obraz końcowy - sam nginx i pliki strony ---
 FROM nginx:alpine
 LABEL org.opencontainers.image.source="https://github.com/Michuu0/Breach-checker"
-LABEL maintainer="student.student@student.com"
+LABEL maintainer="michal.trojaan@gmail.com"
 COPY --from=lint /site/ /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
