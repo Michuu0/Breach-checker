@@ -1,4 +1,6 @@
-# Weryfikacja w CI: backend z obrazu pobranego z rejestru zamiast budowania z ./backend
+# Weryfikacja w CI: backend i frontend z obrazów pobranych z rejestru zamiast budowania ze źródeł
 services:
   backend:
     image: ${BACKEND_IMAGE}
+  frontend:
+    image: ${FRONTEND_IMAGE}
